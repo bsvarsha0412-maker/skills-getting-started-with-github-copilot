@@ -38,7 +38,31 @@ activities = {
         "schedule": "Mondays, Wednesdays, Fridays, 2:00 PM - 3:00 PM",
         "max_participants": 30,
         "participants": ["john@mergington.edu", "olivia@mergington.edu"]
-    }
+    },
+    "Basketball Club": {
+    "description": "Learn basketball skills and compete in matches",
+    "schedule": "Mondays, 4:00 PM - 5:30 PM",
+    "max_participants": 15,
+    "participants": []
+},
+"Art Club": {
+    "description": "Explore painting and creative arts",
+    "schedule": "Wednesdays, 4:00 PM - 5:30 PM",
+    "max_participants": 15,
+    "participants": []
+},
+"Science Club": {
+    "description": "Perform experiments and science projects",
+    "schedule": "Thursdays, 4:00 PM - 5:30 PM",
+    "max_participants": 20,
+    "participants": []
+},
+"Soccer Club": {
+    "description": "Practice soccer and teamwork",
+    "schedule": "Fridays, 4:00 PM - 5:30 PM",
+    "max_participants": 18,
+    "participants": []
+}
 }
 
 
@@ -55,6 +79,7 @@ def get_activities():
 @app.post("/activities/{activity_name}/signup")
 def signup_for_activity(activity_name: str, email: str):
     """Sign up a student for an activity"""
+
     # Validate activity exists
     if activity_name not in activities:
         raise HTTPException(status_code=404, detail="Activity not found")
@@ -62,6 +87,14 @@ def signup_for_activity(activity_name: str, email: str):
     # Get the specific activity
     activity = activities[activity_name]
 
+    # Validate student is not already signed up
+    if email in activity["participants"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Student already signed up for this activity"
+        )
+
     # Add student
     activity["participants"].append(email)
+
     return {"message": f"Signed up {email} for {activity_name}"}
